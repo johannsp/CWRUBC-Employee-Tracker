@@ -2,18 +2,48 @@
 // =============================
 const path = require("path");
 const fs = require("fs");
-//const util = require("util");
+const inquirer = require("inquirer");
 const mysql = require("mysql");
 const cTable = require("console.table");
-const inquirer = require("inquirer");
 
-// FS *Async functions
-// const readFileAsync = util.promisify(fs.readFile);
-// const writeFileAsync = util.promisify(fs.writeFile);
-// const appendFileAsync = util.promisify(fs.appendFile);
+/* {{{ **
+** //const util = require("util");
+** // fs *Async functions
+** // const readFileAsync = util.promisify(fs.readFile);
+** // const writeFileAsync = util.promisify(fs.writeFile);
+** // const appendFileAsync = util.promisify(fs.appendFile);
+** 
+** // mysql *Async functions
+** //const mysqlCreateConnectionAsync = util.promisify(mysql.createConnection);
+** //const mysqlQueryAsync = util.promisify(mysql.query);
+** }}} */
 
-const mysqlCreateConnectionAsync = util.promisify(mysql.createConnection);
-const mysqlQueryAsync = util.promisify(mysql.query);
+// Follow example code to create a custom class providing a Promise object
+// wrapper object around the core mysql methods.
+// CITE: https://codeburst.io/node-js-mysql-and-promises-4c3be599909b
+class Database {
+  constructor(config) {
+    this.connection = mysql.createConnection(config);
+  }
+  query(sql, args) {
+    return new Promise((resolve, reject) => {
+      this.connection.query(sql, args, (err, rows) => {
+        if (err)
+          return reject(err);
+        resolve(rows);
+      });
+    });
+  }
+  end() {
+    return new Promise((resolve, reject) => {
+      this.connection.end(err => {
+        if (err)
+          return reject(err);
+        resolve();
+      });
+    });
+  }
+}
 
 // SQL connection setup
 const mysqlSetup = {
@@ -28,25 +58,23 @@ const mysqlSetup = {
   database: "company_db"
 };
 
-var connection = mysql.createConnection(mysqlSetup);
+const connection = new Database(mysqlSetup);
 
 const viewAllDepartments = async () => {
-  const query = await connection.query(
+  const res = await connection.query(
     "SELECT * "+
     "FROM department",
-    (err, res) => {
-      if (err) throw err;
-      console.clear()
-      console.log(res);
-      console.table(res);
-    }
+    ''  // Dummy parameter to match prototype in wrapper object
   );
+  console.log(res);
+  console.table(res);
 }
 
 const viewAllRoles = async () => {
   const query = await connection.query(
     "SELECT * "+
     "FROM role",
+    '', // Dummy parameter to match prototype in wrapper object
     (err, res) => {
       if (err) throw err;
       console.clear()
@@ -57,7 +85,7 @@ const viewAllRoles = async () => {
 }
 
 const viewAllEmployees = async () => {
-  const query = await connection.query(
+  const res = await connection.query(
     "SELECT "+
     "employee.id as id, "+
     "employee.first_name as first_name, "+
@@ -69,6 +97,7 @@ const viewAllEmployees = async () => {
     "employee.role_id = role.id "+
     "INNER JOIN department ON "+ 
     "role.department_id = department.id",
+    '', // Dummy parameter to match prototype in wrapper object
     (err, res) => {
       if (err) throw err;
       console.clear()
@@ -78,39 +107,45 @@ const viewAllEmployees = async () => {
   );
 }
 
-const get
 const viewAllEmployeesByDept = async () => {
-  return new Promise(async (resolve, reject) => {
-    const dept = await connection.query(
-      "SELECT name FROM department",
-      async (err, res) => {
-        if (err) throw err;
-        let retVal = res.map(({name}) => name);
-        return retVal;
-      }
-    );
-    console.log('∞° dept=\n"'+JSON.stringify(dept)+'"');
-    /* {{{ **
-    ** const query = await connection.query(
-    **   "SELECT "+
-    **   "employee.id as id, "+
-    **   "employee.first_name as first_name, "+
-    **   "employee.last_name as last_name, "+
-    **   "department.name as department, "+
-    **   "role.salary as salary "+
-    **   "FROM employee "+
-    **   "INNER JOIN role ON "+ 
-    **   "employee.role_id = role.id "+
-    **   "INNER JOIN department ON "+ 
-    **   "role.department_id = department.id"+
-    **   "WHERE department = ?",
-    **   (err, res) => {
-    **     if (err) throw err;
-    **     console.clear()
-    **     console.table(res);
-    **   }
-    ** );
-    ** }}} */
+  const dept = await connection.query(
+    "SELECT name FROM department",
+    '', // Dummy parameter to match prototype in wrapper object
+    async (err, res) => {
+      if (err) throw err;
+      let retVal = res.map(({name}) => name);
+      return retVal;
+    }
+  );
+  console.log('∞° dept=\n"'+JSON.stringify(dept)+'"');
+  const questions = [ // {{{
+    {
+      type: "list", name: "whichDept",
+      message: "Which department?",
+      choices: dept,
+    }
+  ];                  // }}}
+  let inp = await inquirer.prompt(questions);
+  const query = await connection.query(
+    "SELECT "+
+    "employee.id as id, "+
+    "employee.first_name as first_name, "+
+    "employee.last_name as last_name, "+
+    "department.name as department, "+
+    "role.salary as salary "+
+    "FROM employee "+
+    "INNER JOIN role ON "+ 
+    "employee.role_id = role.id "+
+    "INNER JOIN department ON "+ 
+    "role.department_id = department.id"+
+    "WHERE department = ?",
+    [inp.whichDept],
+    (err, res) => {
+      if (err) throw err;
+      console.clear()
+      console.table(res);
+    }
+  );
 }
 
 const mainMenu = async () => {
@@ -153,6 +188,9 @@ const mainMenu = async () => {
         await viewAllEmployeesByDept();
         break;
       case "View All Employees by Manager":
+      case "Update Employee Role":
+      case "Update Employee Manager":
+        break;
       case "Exit":
         continuing = false;
         break;
@@ -160,16 +198,12 @@ const mainMenu = async () => {
         reject(`Unsupported role ${inp.whichOp}`);
         break;
     }
-    if (inp.addAnother) {
-      await getEmployeeDetailsAll()
-    }
     resolve(continuing);
   });
 }
 
-connection.connect(async function(err) {
-  if (err) throw err;
-  console.log("connected as id " + connection.threadId);
+// Implement main() function as an IIFE to run the program
+const main = (async () => {
   /* {{{ **
   ** const query = connection.query(
   **   "SELECT * FROM employee " +
@@ -192,5 +226,5 @@ connection.connect(async function(err) {
   }
   while (continuing);
   connection.end();
-});
+})();
 
