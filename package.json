@@ -18,5 +18,11 @@
   "bugs": {
     "url": "https://github.com/johannsp/CWRUBC-Employee-Tracker/issues"
   },
-  "homepage": "https://github.com/johannsp/CWRUBC-Employee-Tracker#readme"
+  "homepage": "https://github.com/johannsp/CWRUBC-Employee-Tracker#readme",
+  "dependencies": {
+    "console.table": "^0.10.0",
+    "fs": "0.0.1-security",
+    "mysql": "^2.18.1",
+    "path": "^0.12.7"
+  }
 }
