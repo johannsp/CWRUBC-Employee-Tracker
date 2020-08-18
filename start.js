@@ -230,6 +230,76 @@ const viewAllEmployeesByMgr = async () => {
   }
 }
 
+const addRole = async () => {
+  try {
+    // Subquery to get list of departments with ids
+    const dept = await connection.query(
+      "SELECT name,id FROM department",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to depts array
+    const depts = dept.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('dept=\n"'+JSON.stringify(dept)+'"');
+      console.log('depts=\n"'+JSON.stringify(depts)+'"');
+    } //DEBUG       }}} End debugging
+    const questions = [ // {{{
+      {
+        type: "input", name: "title",
+        message: "Title for the role?",
+      },
+      {
+        type: "input", name: "salary",
+        message: "Salary amount?",
+        validate: (val) => {
+          let pass = val.match(
+            /^\d+$/
+          );
+          return (pass)
+            ? true
+            : "Salary needs to be a number";
+        }
+      },
+      {
+        type: "list", name: "whichDept",
+        message: "Which department?",
+        choices: depts
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    // Lookup up id(s) by value for use in query
+    const findDept = (slot) => slot.name == inp.whichDept;
+    dept_id = dept[dept.findIndex(findDept)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichDept=\n"'+inp.whichDept+'"');
+      console.log('dept_id=\n"'+dept_id+'"');
+    } //DEBUG       }}} End debugging
+    const args = {
+      title: inp.title,
+      salary: inp.salary,
+      department_id: dept_id
+    }
+    if (DEBUG) { // {{{ Debugging output
+      console.log('args=\n"'+args+'"');
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "INSERT INTO role SET ?",
+      args
+    );
+    /* {{{ **
+    ** console.clear()
+    ** }}} */
+    if (DEBUG) { // {{{ Debugging output
+      console.log(res);
+      console.table(res);
+    } //DEBUG       }}} End debugging
+    console.log(res.affectedRows + " row(s) inserted!\n");
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 const addEmployee = async () => {
   try {
     const role = await connection.query(
@@ -368,6 +438,7 @@ const mainMenu = async () => {
         case "Add Department":
           break;
         case "Add Role":
+          await addRole();
           break;
         case "Add Employee":
           await addEmployee();
