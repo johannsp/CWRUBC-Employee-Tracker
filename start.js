@@ -230,6 +230,35 @@ const viewAllEmployeesByMgr = async () => {
   }
 }
 
+const addDepartment = async () => {
+  try {
+    const questions = [ // {{{
+      {
+        type: "input", name: "name",
+        message: "Department name?",
+      },
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    const args = {
+      name: inp.name
+    }
+    const res = await connection.query(
+      "INSERT INTO department SET ?",
+      args
+    );
+    /* {{{ **
+    ** console.clear()
+    ** }}} */
+    if (DEBUG) { // {{{ Debugging output
+      console.log(res);
+      console.table(res);
+    } //DEBUG       }}} End debugging
+    console.log(res.affectedRows + " row(s) inserted!\n");
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 const addRole = async () => {
   try {
     // Subquery to get list of departments with ids
@@ -436,6 +465,7 @@ const mainMenu = async () => {
           await viewAllEmployeesByMgr();
           break;
         case "Add Department":
+          await addDepartment();
           break;
         case "Add Role":
           await addRole();
