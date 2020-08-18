@@ -93,306 +93,331 @@ const viewAllRoles = async () => {
 }
 
 const viewAllEmployees = async () => {
-  const res = await connection.query(
-    "SELECT "+
-    "employee.id as id, "+
-    "employee.first_name as first_name, "+
-    "employee.last_name as last_name, "+
-    "role.title as job_title, "+
-    "department.name as department, "+
-    "role.salary as salary "+
-    "FROM employee "+
-    "INNER JOIN role ON "+ 
-    "employee.role_id = role.id "+
-    "INNER JOIN department ON "+ 
-    "role.department_id = department.id",
-    ""  // Dummy parameter to match prototype in wrapper object
-  );
-  console.clear()
-  if (DEBUG) { // {{{ Debugging output
-    console.log(res);
-  } //DEBUG       }}} End debugging
-  console.table(res);
+  try {
+    const res = await connection.query(
+      "SELECT "+
+      "employee.id as id, "+
+      "employee.first_name as first_name, "+
+      "employee.last_name as last_name, "+
+      "role.title as job_title, "+
+      "department.name as department, "+
+      "role.salary as salary "+
+      "FROM employee "+
+      "INNER JOIN role ON "+ 
+      "employee.role_id = role.id "+
+      "INNER JOIN department ON "+ 
+      "role.department_id = department.id",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    console.clear()
+    if (DEBUG) { // {{{ Debugging output
+      console.log(res);
+    } //DEBUG       }}} End debugging
+    console.table(res);
+  } catch (error) {
+    console.log(error.message);
+  }
 }
 
 const viewAllEmployeesByDept = async () => {
-  // Subquery to get list of departments
-  const dept = await connection.query(
-    "SELECT name FROM department",
-    ""  // Dummy parameter to match prototype in wrapper object
-  );
-  // Parse results to depts array
-  const depts = dept.map(obj => obj.name);
-  if (DEBUG) { // {{{ Debugging output
-    console.log('dept=\n"'+JSON.stringify(dept)+'"');
-    console.log('depts=\n"'+JSON.stringify(depts)+'"');
-  } //DEBUG       }}} End debugging
-  const questions = [ // {{{
-    {
-      type: "list", name: "whichDept",
-      message: "Which department?",
-      choices: depts
-    }
-  ];                  // }}}
-  let inp = await inquirer.prompt(questions);
-  if (DEBUG) { // {{{ Debugging output
-    console.log('inp.whichDept=\n"'+inp.whichDept+'"');
-  } //DEBUG       }}} End debugging
-  const res = await connection.query(
-    "SELECT "+
-    "employee.id as id, "+
-    "employee.first_name as first_name, "+
-    "employee.last_name as last_name, "+
-    "role.title as job_title, "+
-    "department.name as department, "+
-    "role.salary as salary "+
-    "FROM employee "+
-    "INNER JOIN role ON "+ 
-    "employee.role_id = role.id "+
-    "INNER JOIN department ON "+ 
-    "role.department_id = department.id "+
-    "WHERE department.name = ?",
-    [inp.whichDept]
-  );
-  console.clear()
-  if (DEBUG) { // {{{ Debugging output
-    console.log(res);
-  } //DEBUG       }}} End debugging
-  console.table(res);
-}
-
-const viewAllEmployeesByMgr = async () => {
-  // Subquery to get list of managers with ids
-  const mgrs = await connection.query(
-    "SELECT DISTINCT "+
-    "CONCAT(m.last_name,', ',m.first_name) as name, "+
-    "e.manager_id as id "+
-    "FROM employee e "+
-    "INNER JOIN employee m ON "+
-    "e.manager_id = m.id ",
-    ""  // Dummy parameter to match prototype in wrapper object
-  );
-  // Parse results to managers array
-  const managers = mgrs.map(obj => obj.name);
-  if (DEBUG) { // {{{ Debugging output
-    console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
-    console.log('managers=\n"'+JSON.stringify(managers)+'"');
-  } //DEBUG       }}} End debugging
-  const questions = [ // {{{
-    {
-      type: "list", name: "whichMgr",
-      message: "Which manager?",
-      choices: managers
-    }
-  ];                  // }}}
-  let inp = await inquirer.prompt(questions);
-  if (DEBUG) { // {{{ Debugging output
-    console.log('inp.whichMgr=\n"'+inp.whichMgr+'"');
-  } //DEBUG       }}} End debugging
-  // Lookup up id(s) by value for use in query
-  const findMgr = (slot) => slot.name == inp.whichMgr;
-  const manager_id = mgrs[mgrs.findIndex(findMgr)].id
-  if (DEBUG) { // {{{ Debugging output
-    console.log('manager_id=\n"'+manager_id+'"');
-  } //DEBUG       }}} End debugging
-  const res = await connection.query(
-    "SELECT "+
-    "employee.id as id, "+
-    "employee.first_name as first_name, "+
-    "employee.last_name as last_name, "+
-    "role.title as job_title, "+
-    "department.name as department, "+
-    "role.salary as salary "+
-    "FROM employee "+
-    "INNER JOIN role ON "+ 
-    "employee.role_id = role.id "+
-    "INNER JOIN department ON "+ 
-    "role.department_id = department.id "+
-    "WHERE employee.manager_id = ?",
-    [manager_id]
-  );
-  console.clear()
-  if (DEBUG) { // {{{ Debugging output
-    console.log(res);
-  } //DEBUG       }}} End debugging
-  console.table(res);
-}
-
-const addEmployee = async () => {
-  const role = await connection.query(
-    "SELECT title, id FROM role",
-    ""  // Dummy parameter to match prototype in wrapper object
-  );
-  // Parse results to roles array
-  const roles = role.map(obj => obj.title);
-  if (DEBUG) { // {{{ Debugging output
-    console.log('role=\n"'+JSON.stringify(role)+'"');
-    console.log('roles=\n"'+JSON.stringify(roles)+'"');
-  } //DEBUG       }}} End debugging
-  const mgrs = await connection.query(
-    "SELECT DISTINCT "+
-    "CONCAT(m.last_name,', ',m.first_name) as name, "+
-    "e.manager_id as id "+
-    "FROM employee e "+
-    "INNER JOIN employee m ON "+
-    "e.manager_id = m.id ",
-    ""  // Dummy parameter to match prototype in wrapper object
-  );
-  // Parse results to managers array
-  const managers = mgrs.map(obj => obj.name);
-  if (DEBUG) { // {{{ Debugging output
-    console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
-    console.log('managers=\n"'+JSON.stringify(managers)+'"');
-  } //DEBUG       }}} End debugging
-  const questions = [ // {{{
-    {
-      type: "input", name: "firstName",
-      message: "First name?",
-    },
-    {
-      type: "input", name: "lastName",
-      message: "Last name?",
-    },
-    {
-      type: "list", name: "whichRole",
-      message: "Which role?",
-      choices: roles
-    },
-    {
-      type: "confirm", name: "pickMgr",
-      message: "Will a manager be assigned?",
-    },
-    {
-      type: "list", name: "whichMgr",
-      message: "Which manager?",
-      choices: managers,
-      when: (answers) => (answers.pickMgr)
-    }
-  ];                  // }}}
-  let inp = await inquirer.prompt(questions);
-  // Lookup up id(s) by value for use in query
-  const findRole = (slot) => slot.title == inp.whichRole;
-  role_id = role[role.findIndex(findRole)].id
-  if (DEBUG) { // {{{ Debugging output
-    console.log('inp.whichRole=\n"'+inp.whichRole+'"');
-    console.log('role_id=\n"'+role_id+'"');
-  } //DEBUG       }}} End debugging
-  let manager_id = null; // By design manager_id defaults to null
-  if (inp.pickMgr) {
-    const findMgr = (slot) => slot.name == inp.whichMgr;
-    manager_id = mgrs[mgrs.findIndex(findMgr)].id
-  }
-  const args = {
-    first_name: inp.firstName,
-    last_name: inp.lastName,
-    role_id: role_id,
-    manager_id: manager_id
-  }
-  if (DEBUG) { // {{{ Debugging output
-    console.log('args=\n"'+args+'"');
-    console.log('args=\n"'+JSON.stringify(args)+'"');
-  } //DEBUG       }}} End debugging
-  const res = await connection.query(
-    "INSERT INTO employee SET ?",
-    args
-  );
-  /* {{{ **
-  ** console.clear()
-  ** }}} */
-  if (DEBUG) { // {{{ Debugging output
-    console.log(res);
-  } //DEBUG       }}} End debugging
-  console.table(res);
-}
-
-const mainMenu = async () => {
-  return new Promise(async (resolve, reject) => {
-    let continuing = true;
+  try {
+    // Subquery to get list of departments
+    const dept = await connection.query(
+      "SELECT name FROM department",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to depts array
+    const depts = dept.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('dept=\n"'+JSON.stringify(dept)+'"');
+      console.log('depts=\n"'+JSON.stringify(depts)+'"');
+    } //DEBUG       }}} End debugging
     const questions = [ // {{{
       {
-        type: "list", name: "whichOp",
-        message: "Which operation?",
-        choices: [
-          "Exit",
-          new inquirer.Separator(),
-          "View All Departments",
-          "View All Roles",
-          "View All Employees",
-          "View All Employees by Department",
-          "View All Employees by Manager",
-          new inquirer.Separator(),
-          "Add Department",
-          "Add Role",
-          "Add Employee",
-          new inquirer.Separator(),
-          "Update Employee Role",
-          "Update Employee Manager",
-        ],
+        type: "list", name: "whichDept",
+        message: "Which department?",
+        choices: depts
       }
     ];                  // }}}
     let inp = await inquirer.prompt(questions);
-    switch (inp.whichOp) {
-      case "View All Departments":
-        await viewAllDepartments();
-        break;
-      case "View All Roles":
-        await viewAllRoles();
-        break;
-      case "View All Employees":
-        await viewAllEmployees();
-        break;
-      case "View All Employees by Department":
-        await viewAllEmployeesByDept();
-        break;
-      case "View All Employees by Manager":
-        await viewAllEmployeesByMgr();
-        break;
-      case "Add Department":
-        break;
-      case "Add Role":
-        break;
-      case "Add Employee":
-        await addEmployee();
-        break;
-      case "Update Employee Role":
-        break;
-      case "Update Employee Manager":
-        break;
-      case "Exit":
-        continuing = false;
-        break;
-      default:
-        reject(`Unsupported role ${inp.whichOp}`);
-        break;
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichDept=\n"'+inp.whichDept+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "SELECT "+
+      "employee.id as id, "+
+      "employee.first_name as first_name, "+
+      "employee.last_name as last_name, "+
+      "role.title as job_title, "+
+      "department.name as department, "+
+      "role.salary as salary "+
+      "FROM employee "+
+      "INNER JOIN role ON "+ 
+      "employee.role_id = role.id "+
+      "INNER JOIN department ON "+ 
+      "role.department_id = department.id "+
+      "WHERE department.name = ?",
+      [inp.whichDept]
+    );
+    console.clear()
+    if (DEBUG) { // {{{ Debugging output
+      console.log(res);
+    } //DEBUG       }}} End debugging
+    console.table(res);
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const viewAllEmployeesByMgr = async () => {
+  try {
+    // Subquery to get list of managers with ids
+    const mgrs = await connection.query(
+      "SELECT DISTINCT "+
+      "CONCAT(m.last_name,', ',m.first_name) as name, "+
+      "e.manager_id as id "+
+      "FROM employee e "+
+      "INNER JOIN employee m ON "+
+      "e.manager_id = m.id ",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to managers array
+    const managers = mgrs.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
+      console.log('managers=\n"'+JSON.stringify(managers)+'"');
+    } //DEBUG       }}} End debugging
+    const questions = [ // {{{
+      {
+        type: "list", name: "whichMgr",
+        message: "Which manager?",
+        choices: managers
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichMgr=\n"'+inp.whichMgr+'"');
+    } //DEBUG       }}} End debugging
+    // Lookup up id(s) by value for use in query
+    const findMgr = (slot) => slot.name == inp.whichMgr;
+    const manager_id = mgrs[mgrs.findIndex(findMgr)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('manager_id=\n"'+manager_id+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "SELECT "+
+      "employee.id as id, "+
+      "employee.first_name as first_name, "+
+      "employee.last_name as last_name, "+
+      "role.title as job_title, "+
+      "department.name as department, "+
+      "role.salary as salary "+
+      "FROM employee "+
+      "INNER JOIN role ON "+ 
+      "employee.role_id = role.id "+
+      "INNER JOIN department ON "+ 
+      "role.department_id = department.id "+
+      "WHERE employee.manager_id = ?",
+      [manager_id]
+    );
+    console.clear()
+    if (DEBUG) { // {{{ Debugging output
+      console.log(res);
+    } //DEBUG       }}} End debugging
+    console.table(res);
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const addEmployee = async () => {
+  try {
+    const role = await connection.query(
+      "SELECT title, id FROM role",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to roles array
+    const roles = role.map(obj => obj.title);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('role=\n"'+JSON.stringify(role)+'"');
+      console.log('roles=\n"'+JSON.stringify(roles)+'"');
+    } //DEBUG       }}} End debugging
+    const mgrs = await connection.query(
+      "SELECT DISTINCT "+
+      "CONCAT(m.last_name,', ',m.first_name) as name, "+
+      "e.manager_id as id "+
+      "FROM employee e "+
+      "INNER JOIN employee m ON "+
+      "e.manager_id = m.id ",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to managers array
+    const managers = mgrs.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
+      console.log('managers=\n"'+JSON.stringify(managers)+'"');
+    } //DEBUG       }}} End debugging
+    const questions = [ // {{{
+      {
+        type: "input", name: "firstName",
+        message: "First name?",
+      },
+      {
+        type: "input", name: "lastName",
+        message: "Last name?",
+      },
+      {
+        type: "list", name: "whichRole",
+        message: "Which role?",
+        choices: roles
+      },
+      {
+        type: "confirm", name: "pickMgr",
+        message: "Will a manager be assigned?",
+      },
+      {
+        type: "list", name: "whichMgr",
+        message: "Which manager?",
+        choices: managers,
+        when: (answers) => (answers.pickMgr)
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    // Lookup up id(s) by value for use in query
+    const findRole = (slot) => slot.title == inp.whichRole;
+    role_id = role[role.findIndex(findRole)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichRole=\n"'+inp.whichRole+'"');
+      console.log('role_id=\n"'+role_id+'"');
+    } //DEBUG       }}} End debugging
+    let manager_id = null; // By design manager_id defaults to null
+    if (inp.pickMgr) {
+      const findMgr = (slot) => slot.name == inp.whichMgr;
+      manager_id = mgrs[mgrs.findIndex(findMgr)].id
     }
-    resolve(continuing);
-  });
+    const args = {
+      first_name: inp.firstName,
+      last_name: inp.lastName,
+      role_id: role_id,
+      manager_id: manager_id
+    }
+    if (DEBUG) { // {{{ Debugging output
+      console.log('args=\n"'+args+'"');
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "INSERT INTO employee SET ?",
+      args
+    );
+    /* {{{ **
+    ** console.clear()
+    ** }}} */
+    if (DEBUG) { // {{{ Debugging output
+      console.log(res);
+      console.table(res);
+    } //DEBUG       }}} End debugging
+    console.log(res.affectedRows + " row(s) inserted!\n");
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const mainMenu = async () => {
+  try {
+    return new Promise(async (resolve, reject) => {
+      let continuing = true;
+      const questions = [ // {{{
+        {
+          type: "list", name: "whichOp",
+          message: "Which operation?",
+          choices: [
+            "Exit",
+            new inquirer.Separator(),
+            "View All Departments",
+            "View All Roles",
+            "View All Employees",
+            "View All Employees by Department",
+            "View All Employees by Manager",
+            new inquirer.Separator(),
+            "Add Department",
+            "Add Role",
+            "Add Employee",
+            new inquirer.Separator(),
+            "Update Employee Role",
+            "Update Employee Manager",
+          ],
+        }
+      ];                  // }}}
+      let inp = await inquirer.prompt(questions);
+      switch (inp.whichOp) {
+        case "View All Departments":
+          await viewAllDepartments();
+          break;
+        case "View All Roles":
+          await viewAllRoles();
+          break;
+        case "View All Employees":
+          await viewAllEmployees();
+          break;
+        case "View All Employees by Department":
+          await viewAllEmployeesByDept();
+          break;
+        case "View All Employees by Manager":
+          await viewAllEmployeesByMgr();
+          break;
+        case "Add Department":
+          break;
+        case "Add Role":
+          break;
+        case "Add Employee":
+          await addEmployee();
+          break;
+        case "Update Employee Role":
+          break;
+        case "Update Employee Manager":
+          break;
+        case "Exit":
+          continuing = false;
+          break;
+        default:
+          reject(`Unsupported role ${inp.whichOp}`);
+          break;
+      }
+      resolve(continuing);
+    });
+  } catch (error) {
+    console.log(error.message);
+  }
 }
 
 // Implement main() function as an IIFE to run the program
 const main = (async () => {
-  /* {{{ **
-  ** const query = connection.query(
-  **   "SELECT * FROM employee " +
-  **   "INNER JOIN role ON " + 
-  **   "employee.role_id = role.id",
-  **   (err, res) => {
-  **     if (err) throw err;
-  **     console.table(res);
-  **     connection.end();
-  **   }
-  ** );
-  ** 
-  ** // logs the actual query being run
-  ** console.log(query.sql);
-  ** }}} */
-  let continuing = false;
-  console.clear();
-  do {
-    console.log('Employee Management System');
-    continuing = await mainMenu()
+  try {
+    /* {{{ **
+    ** const query = connection.query(
+    **   "SELECT * FROM employee " +
+    **   "INNER JOIN role ON " + 
+    **   "employee.role_id = role.id",
+    **   (err, res) => {
+    **     if (err) throw err;
+    **     console.table(res);
+    **     connection.end();
+    **   }
+    ** );
+    ** 
+    ** // logs the actual query being run
+    ** console.log(query.sql);
+    ** }}} */
+    let continuing = false;
+    console.clear();
+    do {
+      console.log('Employee Management System');
+      continuing = await mainMenu()
+    }
+    while (continuing);
+    connection.end();
+  } catch (error) {
+    console.log(error.message);
   }
-  while (continuing);
-  connection.end();
 })();
 
