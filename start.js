@@ -80,20 +80,28 @@ const viewAllDepartments = async () => {
 }
 
 const viewAllRoles = async () => {
-  const res = await connection.query(
-    "SELECT * "+
-    "FROM role",
-    ""  // Dummy parameter to match prototype in wrapper object
-  );
-  console.clear()
-  if (DEBUG) { // {{{ Debugging output
-    console.log(res);
-  } //DEBUG       }}} End debugging
-  console.table(res);
+  try {
+    // Query for all rows in role
+    const res = await connection.query(
+      "SELECT * "+
+      "FROM role",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    console.clear()
+    if (DEBUG) { // {{{ Debugging output
+      console.log(res);
+    } //DEBUG       }}} End debugging
+    console.table(res);
+  } catch (error) {
+    console.log(error.message);
+  }
 }
 
 const viewAllEmployees = async () => {
   try {
+    // Query for all rows in employee also
+    // joining in important information
+    // from role and department
     const res = await connection.query(
       "SELECT "+
       "employee.id as id, "+
@@ -121,7 +129,8 @@ const viewAllEmployees = async () => {
 
 const viewAllEmployeesByDept = async () => {
   try {
-    // Subquery to get list of departments
+    // Query first to get list of departments
+    // then ask for department on which to filter.
     const dept = await connection.query(
       "SELECT name FROM department",
       ""  // Dummy parameter to match prototype in wrapper object
@@ -143,6 +152,9 @@ const viewAllEmployeesByDept = async () => {
     if (DEBUG) { // {{{ Debugging output
       console.log('inp.whichDept=\n"'+inp.whichDept+'"');
     } //DEBUG       }}} End debugging
+    // Query for all rows in employee also
+    // joining in important information
+    // from role and department
     const res = await connection.query(
       "SELECT "+
       "employee.id as id, "+
@@ -171,7 +183,9 @@ const viewAllEmployeesByDept = async () => {
 
 const viewAllEmployeesByMgr = async () => {
   try {
-    // Subquery to get list of managers with ids
+    // Query first to get list of managers with ids
+    // then ask for manager on which to filter,
+    // and cross reference before filtering by manager id.
     const mgrs = await connection.query(
       "SELECT DISTINCT "+
       "CONCAT(m.last_name,', ',m.first_name) as name, "+
@@ -204,6 +218,9 @@ const viewAllEmployeesByMgr = async () => {
     if (DEBUG) { // {{{ Debugging output
       console.log('manager_id=\n"'+manager_id+'"');
     } //DEBUG       }}} End debugging
+    // Query for all rows in employee also
+    // joining in important information
+    // from role and department
     const res = await connection.query(
       "SELECT "+
       "employee.id as id, "+
@@ -261,7 +278,9 @@ const addDepartment = async () => {
 
 const addRole = async () => {
   try {
-    // Subquery to get list of departments with ids
+    // Query first to get list of departments with ids
+    // then ask for department to be added,
+    // and cross reference before inserting with department id.
     const dept = await connection.query(
       "SELECT name,id FROM department",
       ""  // Dummy parameter to match prototype in wrapper object
@@ -331,6 +350,9 @@ const addRole = async () => {
 
 const addEmployee = async () => {
   try {
+    // Query first to get list of roles with ids
+    // then ask for role to be added,
+    // and cross reference before inserting with role id.
     const role = await connection.query(
       "SELECT title, id FROM role",
       ""  // Dummy parameter to match prototype in wrapper object
@@ -341,6 +363,9 @@ const addEmployee = async () => {
       console.log('role=\n"'+JSON.stringify(role)+'"');
       console.log('roles=\n"'+JSON.stringify(roles)+'"');
     } //DEBUG       }}} End debugging
+    // Query first to get list of managers with ids
+    // then ask for manager to be added,
+    // and cross reference before inserting with manager id.
     const mgrs = await connection.query(
       "SELECT DISTINCT "+
       "CONCAT(m.last_name,', ',m.first_name) as name, "+
