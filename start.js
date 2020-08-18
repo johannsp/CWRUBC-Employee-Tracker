@@ -98,6 +98,7 @@ const viewAllEmployees = async () => {
     "employee.id as id, "+
     "employee.first_name as first_name, "+
     "employee.last_name as last_name, "+
+    "role.title as job_title, "+
     "department.name as department, "+
     "role.salary as salary "+
     "FROM employee "+
@@ -115,11 +116,15 @@ const viewAllEmployees = async () => {
 }
 
 const viewAllEmployeesByDept = async () => {
-  const depts = await connection.query(
+  // Subquery to get list of departments
+  const dept = await connection.query(
     "SELECT name FROM department",
     ""  // Dummy parameter to match prototype in wrapper object
   );
+  // Parse results to depts array
+  const depts = dept.map(obj => obj.name);
   if (DEBUG) { // {{{ Debugging output
+    console.log('dept=\n"'+JSON.stringify(dept)+'"');
     console.log('depts=\n"'+JSON.stringify(depts)+'"');
   } //DEBUG       }}} End debugging
   const questions = [ // {{{
@@ -138,6 +143,7 @@ const viewAllEmployeesByDept = async () => {
     "employee.id as id, "+
     "employee.first_name as first_name, "+
     "employee.last_name as last_name, "+
+    "role.title as job_title, "+
     "department.name as department, "+
     "role.salary as salary "+
     "FROM employee "+
@@ -156,6 +162,7 @@ const viewAllEmployeesByDept = async () => {
 }
 
 const viewAllEmployeesByMgr = async () => {
+  // Subquery to get list of managers with ids
   const mgrs = await connection.query(
     "SELECT DISTINCT "+
     "CONCAT(m.last_name,', ',m.first_name) as name, "+
@@ -166,7 +173,7 @@ const viewAllEmployeesByMgr = async () => {
     ""  // Dummy parameter to match prototype in wrapper object
   );
   // Parse results to managers array
-  let managers = mgrs.map(obj => obj.name);
+  const managers = mgrs.map(obj => obj.name);
   if (DEBUG) { // {{{ Debugging output
     console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
     console.log('managers=\n"'+JSON.stringify(managers)+'"');
@@ -182,6 +189,7 @@ const viewAllEmployeesByMgr = async () => {
   if (DEBUG) { // {{{ Debugging output
     console.log('inp.whichMgr=\n"'+inp.whichMgr+'"');
   } //DEBUG       }}} End debugging
+  // Lookup up id(s) by value for use in query
   const findMgr = (slot) => slot.name == inp.whichMgr;
   const manager_id = mgrs[mgrs.findIndex(findMgr)].id
   if (DEBUG) { // {{{ Debugging output
@@ -192,6 +200,7 @@ const viewAllEmployeesByMgr = async () => {
     "employee.id as id, "+
     "employee.first_name as first_name, "+
     "employee.last_name as last_name, "+
+    "role.title as job_title, "+
     "department.name as department, "+
     "role.salary as salary "+
     "FROM employee "+
@@ -210,11 +219,14 @@ const viewAllEmployeesByMgr = async () => {
 }
 
 const addEmployee = async () => {
-  const roles = await connection.query(
-    "SELECT title FROM role",
+  const role = await connection.query(
+    "SELECT title, id FROM role",
     ""  // Dummy parameter to match prototype in wrapper object
   );
+  // Parse results to roles array
+  const roles = role.map(obj => obj.title);
   if (DEBUG) { // {{{ Debugging output
+    console.log('role=\n"'+JSON.stringify(role)+'"');
     console.log('roles=\n"'+JSON.stringify(roles)+'"');
   } //DEBUG       }}} End debugging
   const mgrs = await connection.query(
@@ -227,7 +239,7 @@ const addEmployee = async () => {
     ""  // Dummy parameter to match prototype in wrapper object
   );
   // Parse results to managers array
-  let managers = mgrs.map(obj => obj.name);
+  const managers = mgrs.map(obj => obj.name);
   if (DEBUG) { // {{{ Debugging output
     console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
     console.log('managers=\n"'+JSON.stringify(managers)+'"');
@@ -258,28 +270,35 @@ const addEmployee = async () => {
     }
   ];                  // }}}
   let inp = await inquirer.prompt(questions);
+  // Lookup up id(s) by value for use in query
+  const findRole = (slot) => slot.title == inp.whichRole;
+  role_id = role[role.findIndex(findRole)].id
+  if (DEBUG) { // {{{ Debugging output
+    console.log('inp.whichRole=\n"'+inp.whichRole+'"');
+    console.log('role_id=\n"'+role_id+'"');
+  } //DEBUG       }}} End debugging
   let manager_id = null; // By design manager_id defaults to null
   if (inp.pickMgr) {
     const findMgr = (slot) => slot.name == inp.whichMgr;
     manager_id = mgrs[mgrs.findIndex(findMgr)].id
   }
-  if (DEBUG) { // {{{ Debugging output
-  } //DEBUG       }}} End debugging
-  if (DEBUG) { // {{{ Debugging output
-    console.log('inp.whichDept=\n"'+inp.whichDept+'"');
-    console.log('manager_id=\n"'+manager_id+'"');
-  } //DEBUG       }}} End debugging
   const args = {
     first_name: inp.firstName,
     last_name: inp.lastName,
-    role_id: inp.whichRole,
+    role_id: role_id,
     manager_id: manager_id
   }
+  if (DEBUG) { // {{{ Debugging output
+    console.log('args=\n"'+args+'"');
+    console.log('args=\n"'+JSON.stringify(args)+'"');
+  } //DEBUG       }}} End debugging
   const res = await connection.query(
     "INSERT INTO employee SET ?",
     args
   );
-  console.clear()
+  /* {{{ **
+  ** console.clear()
+  ** }}} */
   if (DEBUG) { // {{{ Debugging output
     console.log(res);
   } //DEBUG       }}} End debugging
