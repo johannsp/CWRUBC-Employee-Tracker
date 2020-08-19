@@ -15,6 +15,7 @@ Node-based content management system (CMS) for employee information
 
 Clone this repository and initialize any required Node modules by running
 > npm install
+Create a local .mysql file to hold the local mysql password unless no password is needed there.
 
 ## Usage
 
