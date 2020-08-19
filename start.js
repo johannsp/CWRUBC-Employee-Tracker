@@ -80,9 +80,11 @@ const viewAllDepartments = async () => {
     ""  // Dummy parameter to match prototype in wrapper object
   );
   console.clear()
-  if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+  if (DEBUG) { // {{{ Debugging output
     console.log('sql=\n"'+connection.sql+'"\n');
-    console.log(res);
+    if (DEBUG >= 2) { // {{{ Debugging output
+      console.log(res);
+    } //DEBUG            }}} End debugging
   } //DEBUG       }}} End debugging
   console.table(res);
 }
@@ -96,9 +98,11 @@ const viewAllRoles = async () => {
       ""  // Dummy parameter to match prototype in wrapper object
     );
     console.clear()
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+    if (DEBUG) { // {{{ Debugging output
       console.log('sql=\n"'+connection.sql+'"\n');
-      console.log(res);
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     console.table(res);
   } catch (error) {
@@ -128,8 +132,10 @@ const viewAllEmployees = async () => {
       ""  // Dummy parameter to match prototype in wrapper object
     );
     console.clear()
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-      console.log('sql=\n"'+connection.sql+'"\n');
+    if (DEBUG) { // {{{ Debugging output
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('sql=\n"'+connection.sql+'"\n');
+      } //DEBUG            }}} End debugging
       console.log(res);
     } //DEBUG       }}} End debugging
     console.table(res);
@@ -148,10 +154,12 @@ const viewAllEmployeesByDept = async () => {
     );
     // Parse results to depts array
     const depts = dept.map(obj => obj.name);
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+    if (DEBUG) { // {{{ Debugging output
       console.log('sql=\n"'+connection.sql+'"\n');
-      console.log('dept=\n"'+JSON.stringify(dept)+'"');
-      console.log('depts=\n"'+JSON.stringify(depts)+'"');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('dept=\n"'+JSON.stringify(dept)+'"');
+        console.log('depts=\n"'+JSON.stringify(depts)+'"');
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     const questions = [ // {{{
       {
@@ -185,9 +193,11 @@ const viewAllEmployeesByDept = async () => {
       [inp.whichDept]
     );
     console.clear()
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+    if (DEBUG) { // {{{ Debugging output
       console.log('sql=\n"'+connection.sql+'"\n');
-      console.log(res);
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     console.table(res);
   } catch (error) {
@@ -211,10 +221,12 @@ const viewAllEmployeesByMgr = async () => {
     );
     // Parse results to managers array
     const managers = mgrs.map(obj => obj.name);
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+    if (DEBUG) { // {{{ Debugging output
       console.log('sql=\n"'+connection.sql+'"\n');
-      console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
-      console.log('managers=\n"'+JSON.stringify(managers)+'"');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
+        console.log('managers=\n"'+JSON.stringify(managers)+'"');
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     const questions = [ // {{{
       {
@@ -287,7 +299,7 @@ const addDepartment = async () => {
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log(res);
         console.table(res);
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     /* {{{ **
     ** else {
@@ -316,7 +328,7 @@ const addRole = async () => {
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('dept=\n"'+JSON.stringify(dept)+'"');
         console.log('depts=\n"'+JSON.stringify(depts)+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     const questions = [ // {{{
       {
@@ -357,7 +369,7 @@ const addRole = async () => {
     if (DEBUG) { // {{{ Debugging output
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('args=\n"'+args+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
       console.log('args=\n"'+JSON.stringify(args)+'"');
     } //DEBUG       }}} End debugging
     const res = await connection.query(
@@ -368,7 +380,7 @@ const addRole = async () => {
       console.log('sql=\n"'+connection.sql+'"\n');
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log(res);
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
     /* {{{ **
@@ -398,7 +410,7 @@ const addEmployee = async () => {
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('role=\n"'+JSON.stringify(role)+'"');
         console.log('roles=\n"'+JSON.stringify(roles)+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     // Query first to get list of managers with ids
     // then ask for manager to be added,
@@ -419,7 +431,7 @@ const addEmployee = async () => {
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
         console.log('managers=\n"'+JSON.stringify(managers)+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     const questions = [ // {{{
       {
@@ -468,7 +480,7 @@ const addEmployee = async () => {
     if (DEBUG) { // {{{ Debugging output
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('args=\n"'+args+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
       console.log('args=\n"'+JSON.stringify(args)+'"');
     } //DEBUG       }}} End debugging
     const res = await connection.query(
@@ -479,7 +491,7 @@ const addEmployee = async () => {
       console.log('sql=\n"'+connection.sql+'"\n');
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log(res);
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
     /* {{{ **
@@ -512,7 +524,7 @@ const updateEmployeeRole = async () => {
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('emps=\n"'+JSON.stringify(emps)+'"');
         console.log('employees=\n"'+JSON.stringify(employees)+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     // Query first to get list of roles with ids
     // then ask for role to be added,
@@ -528,7 +540,7 @@ const updateEmployeeRole = async () => {
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('role=\n"'+JSON.stringify(role)+'"');
         console.log('roles=\n"'+JSON.stringify(roles)+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     const questions = [ // {{{
       {
@@ -570,7 +582,7 @@ const updateEmployeeRole = async () => {
     if (DEBUG) { // {{{ Debugging output
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('args=\n"'+args+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
       console.log('args=\n"'+JSON.stringify(args)+'"');
     } //DEBUG       }}} End debugging
     const res = await connection.query(
@@ -581,7 +593,7 @@ const updateEmployeeRole = async () => {
       console.log('sql=\n"'+connection.sql+'"\n');
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log(res);
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
     /* {{{ **
@@ -614,7 +626,7 @@ const updateEmployeeManager = async () => {
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('emps=\n"'+JSON.stringify(emps)+'"');
         console.log('employees=\n"'+JSON.stringify(employees)+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
     } //DEBUG       }}} End debugging
     // List of managers here can reuse full list of employees
     // then ask for manager to be added,
@@ -656,9 +668,6 @@ const updateEmployeeManager = async () => {
     ];                  // }}}
     let inp = await inquirer.prompt(questions);
     // Lookup up id(s) by value for use in query
-    if (DEBUG) { // {{{ Debugging output
-      console.log('inp.whichEmp=\n"'+inp.whichEmp+'"');
-    } //DEBUG       }}} End debugging
     const findEmp = (slot) => slot.name == inp.whichEmp;
     emp_id = emps[emps.findIndex(findEmp)].id
     if (DEBUG) { // {{{ Debugging output
@@ -685,7 +694,7 @@ const updateEmployeeManager = async () => {
     if (DEBUG) { // {{{ Debugging output
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log('args=\n"'+args+'"');
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
       console.log('args=\n"'+JSON.stringify(args)+'"');
     } //DEBUG       }}} End debugging
     const res = await connection.query(
@@ -696,7 +705,7 @@ const updateEmployeeManager = async () => {
       console.log('sql=\n"'+connection.sql+'"\n');
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log(res);
-      } //DEBUG       }}} End debugging
+      } //DEBUG            }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
     /* {{{ **
@@ -705,6 +714,479 @@ const updateEmployeeManager = async () => {
     ** }
     ** }}} */
     console.log(res.affectedRows + " row(s) updated!\n");
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const updateRoleDepartment = async () => {
+  try {
+    // Query first to get list of roles with ids
+    // then ask for role to be added,
+    // and cross reference before inserting with role id.
+    const role = await connection.query(
+      "SELECT title, id FROM role",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to roles array
+    const roles = role.map(obj => obj.title);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('role=\n"'+JSON.stringify(role)+'"');
+        console.log('roles=\n"'+JSON.stringify(roles)+'"');
+      } //DEBUG            }}} End debugging
+    } //DEBUG       }}} End debugging
+    // Query first to get list of departments
+    // then ask for department on which to filter.
+    const dept = await connection.query(
+      "SELECT name, id FROM department",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to depts array
+    const depts = dept.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('dept=\n"'+JSON.stringify(dept)+'"');
+        console.log('depts=\n"'+JSON.stringify(depts)+'"');
+      } //DEBUG            }}} End debugging
+    } //DEBUG       }}} End debugging
+    const questions = [ // {{{
+      {
+        type: "list", name: "whichRole",
+        message: "Update which role?",
+        choices: roles
+      },
+      {
+        type: "list", name: "whichDept",
+        message: "Which department?",
+        choices: depts
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    // Lookup up id(s) by value for use in query
+    const findRole = (slot) => slot.title == inp.whichRole;
+    role_id = role[role.findIndex(findRole)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichRole=\n"'+inp.whichRole+'"');
+      console.log('role_id=\n"'+role_id+'"');
+    } //DEBUG       }}} End debugging
+    const findDept = (slot) => slot.name == inp.whichDept;
+    dept_id = dept[dept.findIndex(findDept)].id;
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichDept=\n"'+inp.whichDept+'"');
+      console.log('dept_id=\n"'+dept_id+'"');
+    } //DEBUG       }}} End debugging
+    const args = [
+      {
+        department_id: dept_id
+      },
+      {
+        id: role_id
+      }
+    ];
+    if (DEBUG) { // {{{ Debugging output
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG            }}} End debugging
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "UPDATE role SET ? WHERE ?",
+      args
+    );
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG            }}} End debugging
+      console.table(res);
+    } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** else {
+    **   console.clear()
+    ** }
+    ** }}} */
+    console.log(res.affectedRows + " row(s) updated!\n");
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const deleteDepartment= async () => {
+  try {
+    // Query first to get list of departments with ids
+    // then ask for department to be added,
+    // and cross reference before inserting with department id.
+    const dept = await connection.query(
+      "SELECT name,id FROM department",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to depts array
+    const depts = dept.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('dept=\n"'+JSON.stringify(dept)+'"');
+        console.log('depts=\n"'+JSON.stringify(depts)+'"');
+      } //DEBUG            }}} End debugging
+    } //DEBUG       }}} End debugging
+    const questions = [ // {{{
+      {
+        type: "list", name: "whichDept",
+        message: "Which department?",
+        choices: depts
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    // Lookup up id(s) by value for use in query
+    const findDept = (slot) => slot.name == inp.whichDept;
+    dept_id = dept[dept.findIndex(findDept)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichDept=\n"'+inp.whichDept+'"');
+      console.log('dept_id=\n"'+dept_id+'"');
+    } //DEBUG       }}} End debugging
+    // First set role_id to null for any employees
+    // that were using this role
+    let args = [
+      {
+        department_id: null
+      },
+      {
+        department_id: dept_id
+      }
+    ];
+    if (DEBUG) { // {{{ Debugging output
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG            }}} End debugging
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const update = await connection.query(
+      "UPDATE role SET ? WHERE ?",
+      args
+    );
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(update);
+      } //DEBUG            }}} End debugging
+      console.table(update);
+    } //DEBUG       }}} End debugging
+    console.log(update.affectedRows + " row(s) updated!\n");
+    // Afterwards, delete the selected employee
+    args = [
+      {
+        id: dept_id
+      }
+    ];
+    if (DEBUG) { // {{{ Debugging output
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG            }}} End debugging
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "DELETE FROM department WHERE ?",
+      args
+    );
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG            }}} End debugging
+      console.table(res);
+    } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** else {
+    **   console.clear()
+    ** }
+    ** }}} */
+    console.log(res.affectedRows + " row(s) deleted!\n");
+    if (res.affectedRows > 0) {
+      console.log(`Deleted ${inp.whichRole}`);
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const deleteRole= async () => {
+  try {
+    // Query first to get list of roles with ids
+    // then ask for role to be added,
+    // and cross reference before inserting with role id.
+    const role = await connection.query(
+      "SELECT title, id FROM role",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to roles array
+    const roles = role.map(obj => obj.title);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('role=\n"'+JSON.stringify(role)+'"');
+        console.log('roles=\n"'+JSON.stringify(roles)+'"');
+      } //DEBUG            }}} End debugging
+    } //DEBUG       }}} End debugging
+    const questions = [ // {{{
+      {
+        type: "list", name: "whichRole",
+        message: "Set to which role?",
+        choices: roles
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    // Lookup up id(s) by value for use in query
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichEmp=\n"'+inp.whichEmp+'"');
+    } //DEBUG       }}} End debugging
+    const findRole = (slot) => slot.title == inp.whichRole;
+    const role_id = role[role.findIndex(findRole)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichRole=\n"'+inp.whichRole+'"');
+      console.log('role_id=\n"'+role_id+'"');
+    } //DEBUG       }}} End debugging
+    // First set role_id to null for any employees
+    // that were using this role
+    let args = [
+      {
+        role_id: null
+      },
+      {
+        role_id: role_id
+      }
+    ];
+    if (DEBUG) { // {{{ Debugging output
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG            }}} End debugging
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const update = await connection.query(
+      "UPDATE employee SET ? WHERE ?",
+      args
+    );
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(update);
+      } //DEBUG            }}} End debugging
+      console.table(update);
+    } //DEBUG       }}} End debugging
+    console.log(update.affectedRows + " row(s) updated!\n");
+    // Afterwards, delete the selected employee
+    args = [
+      {
+        id: emp_id
+      }
+    ];
+    if (DEBUG) { // {{{ Debugging output
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG            }}} End debugging
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "DELETE FROM employee WHERE ?",
+      args
+    );
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG            }}} End debugging
+      console.table(res);
+    } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** else {
+    **   console.clear()
+    ** }
+    ** }}} */
+    console.log(res.affectedRows + " row(s) deleted!\n");
+    if (res.affectedRows > 0) {
+      console.log(`Deleted ${inp.whichRole}`);
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const deleteEmployee= async () => {
+  try {
+    // Query first to get list of employees with ids
+    // then ask which employee should be updated
+    // and cross reference before inserting with employee id.
+    const emps = await connection.query(
+      "SELECT DISTINCT"+
+      " CONCAT(e.last_name,', ',e.first_name) as name,"+
+      " e.id as id"+
+      " FROM employee e",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to employees array
+    const employees = emps.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('emps=\n"'+JSON.stringify(emps)+'"');
+        console.log('employees=\n"'+JSON.stringify(employees)+'"');
+      } //DEBUG            }}} End debugging
+    } //DEBUG       }}} End debugging
+    // List of managers here can reuse full list of employees
+    // then ask for manager to be added,
+    // and cross reference before inserting with manager id.
+    /* {{{ **
+    ** const mgrs = await connection.query(
+    **   "SELECT DISTINCT"+
+    **   " CONCAT(m.last_name,', ',m.first_name) as name,"+
+    **   " e.manager_id as id"+
+    **   " FROM employee e"+
+    **   " INNER JOIN employee m ON"+
+    **   " e.manager_id = m.id",
+    **   ""  // Dummy parameter to match prototype in wrapper object
+    ** );
+    ** }}} */
+    const mgrs = emps;
+    // Parse results to managers array
+    const managers = mgrs.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
+      console.log('managers=\n"'+JSON.stringify(managers)+'"');
+    } //DEBUG       }}} End debugging
+    const questions = [ // {{{
+      {
+        type: "list", name: "whichEmp",
+        message: "Update which employee?",
+        choices: employees
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    // Lookup up id(s) by value for use in query
+    const findEmp = (slot) => slot.name == inp.whichEmp;
+    emp_id = emps[emps.findIndex(findEmp)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichEmp=\n"'+inp.whichEmp+'"');
+      console.log('emp_id=\n"'+emp_id+'"');
+    } //DEBUG       }}} End debugging
+    // First set manager_id to null for any other employees
+    // that were managed by the employee to remove
+    let args = [
+      {
+        manager_id: null
+      },
+      {
+        manager_id: emp_id
+      }
+    ];
+    if (DEBUG) { // {{{ Debugging output
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG            }}} End debugging
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const update = await connection.query(
+      "UPDATE employee SET ? WHERE ?",
+      args
+    );
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(update);
+      } //DEBUG            }}} End debugging
+      console.table(update);
+    } //DEBUG       }}} End debugging
+    console.log(update.affectedRows + " row(s) updated!\n");
+    // Afterwards, delete the selected employee
+    args = [
+      {
+        id: emp_id
+      }
+    ];
+    if (DEBUG) { // {{{ Debugging output
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG            }}} End debugging
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "DELETE FROM employee WHERE ?",
+      args
+    );
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG            }}} End debugging
+      console.table(res);
+    } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** else {
+    **   console.clear()
+    ** }
+    ** }}} */
+    console.log(res.affectedRows + " row(s) deleted!\n");
+    if (res.affectedRows > 0) {
+      console.log(`Deleted ${inp.whichEmp}`);
+    }
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const totalSalaryByDept = async () => {
+  try {
+    // Query first to get list of departments
+    // then ask for department on which to filter.
+    const dept = await connection.query(
+      "SELECT name FROM department",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to depts array
+    const depts = dept.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('dept=\n"'+JSON.stringify(dept)+'"');
+        console.log('depts=\n"'+JSON.stringify(depts)+'"');
+      } //DEBUG       }}} End debugging
+    } //DEBUG       }}} End debugging
+    const questions = [ // {{{
+      {
+        type: "list", name: "whichDept",
+        message: "Which department?",
+        choices: depts
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichDept=\n"'+inp.whichDept+'"');
+    } //DEBUG       }}} End debugging
+    // Query for all rows in employee also
+    // joining in important information
+    // from role and department
+    const res = await connection.query(
+      "SELECT"+
+      " department.name as department,"+
+      " SUM(role.salary) as total_salary"+
+      " FROM employee"+
+      " INNER JOIN role ON"+ 
+      " employee.role_id = role.id"+
+      " INNER JOIN department ON"+ 
+      " role.department_id = department.id"+
+      " WHERE department.name = ?"+
+      " GROUP BY role.salary",
+      [inp.whichDept]
+    );
+    console.clear()
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG            }}} End debugging
+    } //DEBUG       }}} End debugging
+    console.table(res);
   } catch (error) {
     console.log(error.message);
   }
@@ -731,8 +1213,15 @@ const mainMenu = async () => {
             "Add Role",
             "Add Employee",
             new inquirer.Separator(),
-            "Update Employee Role",
-            "Update Employee Manager",
+            "Update Employee's Role",
+            "Update Employee's Manager",
+            "Update Role's Department",
+            new inquirer.Separator(),
+            "Delete Department",
+            "Delete Role",
+            "Delete Employee",
+            new inquirer.Separator(),
+            "Total Salary by Department"
           ],
         }
       ];                  // }}}
@@ -762,11 +1251,26 @@ const mainMenu = async () => {
         case "Add Employee":
           await addEmployee();
           break;
-        case "Update Employee Role":
+        case "Update Employee's Role":
           await updateEmployeeRole();
           break;
-        case "Update Employee Manager":
+        case "Update Employee's Manager":
           await updateEmployeeManager();
+          break;
+        case "Update Role's Department":
+          await updateRoleDepartment();
+          break;
+        case "Total Salary by Department":
+          await totalSalaryByDept();
+          break;
+        case "Delete Department":
+          await deleteDepartment();
+          break;
+        case "Delete Role":
+          await deleteRole();
+          break;
+        case "Delete Employee":
+          await deleteEmployee();
           break;
         case "Exit":
           continuing = false;
