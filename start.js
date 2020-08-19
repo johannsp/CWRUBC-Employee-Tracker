@@ -68,8 +68,8 @@ const connection = new Database(mysqlSetup);
 
 const viewAllDepartments = async () => {
   const res = await connection.query(
-    "SELECT * "+
-    "FROM department",
+    "SELECT *"+
+    " FROM department",
     ""  // Dummy parameter to match prototype in wrapper object
   );
   console.clear()
@@ -83,8 +83,8 @@ const viewAllRoles = async () => {
   try {
     // Query for all rows in role
     const res = await connection.query(
-      "SELECT * "+
-      "FROM role",
+      "SELECT *"+
+      " FROM role",
       ""  // Dummy parameter to match prototype in wrapper object
     );
     console.clear()
@@ -103,18 +103,19 @@ const viewAllEmployees = async () => {
     // joining in important information
     // from role and department
     const res = await connection.query(
-      "SELECT "+
-      "employee.id as id, "+
-      "employee.first_name as first_name, "+
-      "employee.last_name as last_name, "+
-      "role.title as job_title, "+
-      "department.name as department, "+
-      "role.salary as salary "+
-      "FROM employee "+
-      "INNER JOIN role ON "+ 
-      "employee.role_id = role.id "+
-      "INNER JOIN department ON "+ 
-      "role.department_id = department.id",
+      "SELECT"+
+      " employee.id as id,"+
+      " employee.first_name as first_name,"+
+      " employee.last_name as last_name,"+
+      " employee.manager_id as managed_by,"+
+      " role.title as job_title,"+
+      " department.name as department,"+
+      " role.salary as salary"+
+      " FROM employee"+
+      " INNER JOIN role ON"+ 
+      " employee.role_id = role.id"+
+      " INNER JOIN department ON"+
+      " role.department_id = department.id",
       ""  // Dummy parameter to match prototype in wrapper object
     );
     console.clear()
@@ -156,19 +157,20 @@ const viewAllEmployeesByDept = async () => {
     // joining in important information
     // from role and department
     const res = await connection.query(
-      "SELECT "+
-      "employee.id as id, "+
-      "employee.first_name as first_name, "+
-      "employee.last_name as last_name, "+
-      "role.title as job_title, "+
-      "department.name as department, "+
-      "role.salary as salary "+
-      "FROM employee "+
-      "INNER JOIN role ON "+ 
-      "employee.role_id = role.id "+
-      "INNER JOIN department ON "+ 
-      "role.department_id = department.id "+
-      "WHERE department.name = ?",
+      "SELECT"+
+      " employee.id as id,"+
+      " employee.first_name as first_name,"+
+      " employee.last_name as last_name,"+
+      " employee.manager_id as managed_by,"+
+      " role.title as job_title,"+
+      " department.name as department,"+
+      " role.salary as salary"+
+      " FROM employee"+
+      " INNER JOIN role ON"+ 
+      " employee.role_id = role.id"+
+      " INNER JOIN department ON"+ 
+      " role.department_id = department.id"+
+      " WHERE department.name = ?",
       [inp.whichDept]
     );
     console.clear()
@@ -187,12 +189,12 @@ const viewAllEmployeesByMgr = async () => {
     // then ask for manager on which to filter,
     // and cross reference before filtering by manager id.
     const mgrs = await connection.query(
-      "SELECT DISTINCT "+
-      "CONCAT(m.last_name,', ',m.first_name) as name, "+
-      "e.manager_id as id "+
-      "FROM employee e "+
-      "INNER JOIN employee m ON "+
-      "e.manager_id = m.id ",
+      "SELECT DISTINCT"+
+      " CONCAT(m.last_name,', ',m.first_name) as name,"+
+      " e.manager_id as id"+
+      " FROM employee e"+
+      " INNER JOIN employee m ON"+
+      " e.manager_id = m.id",
       ""  // Dummy parameter to match prototype in wrapper object
     );
     // Parse results to managers array
@@ -222,19 +224,20 @@ const viewAllEmployeesByMgr = async () => {
     // joining in important information
     // from role and department
     const res = await connection.query(
-      "SELECT "+
-      "employee.id as id, "+
-      "employee.first_name as first_name, "+
-      "employee.last_name as last_name, "+
-      "role.title as job_title, "+
-      "department.name as department, "+
-      "role.salary as salary "+
-      "FROM employee "+
-      "INNER JOIN role ON "+ 
-      "employee.role_id = role.id "+
-      "INNER JOIN department ON "+ 
-      "role.department_id = department.id "+
-      "WHERE employee.manager_id = ?",
+      "SELECT"+
+      " employee.id as id,"+
+      " employee.first_name as first_name,"+
+      " employee.last_name as last_name,"+
+      " employee.manager_id as managed_by,"+
+      " role.title as job_title,"+
+      " department.name as department,"+
+      " role.salary as salary"+
+      " FROM employee"+
+      " INNER JOIN role ON"+ 
+      " employee.role_id = role.id"+
+      " INNER JOIN department ON"+ 
+      " role.department_id = department.id"+
+      " WHERE employee.manager_id = ?",
       [manager_id]
     );
     console.clear()
@@ -371,12 +374,12 @@ const addEmployee = async () => {
     // then ask for manager to be added,
     // and cross reference before inserting with manager id.
     const mgrs = await connection.query(
-      "SELECT DISTINCT "+
-      "CONCAT(m.last_name,', ',m.first_name) as name, "+
-      "e.manager_id as id "+
-      "FROM employee e "+
-      "INNER JOIN employee m ON "+
-      "e.manager_id = m.id ",
+      "SELECT DISTINCT"+
+      " CONCAT(m.last_name,', ',m.first_name) as name,"+
+      " e.manager_id as id"+
+      " FROM employee e"+
+      " INNER JOIN employee m ON"+
+      " e.manager_id = m.id",
       ""  // Dummy parameter to match prototype in wrapper object
     );
     // Parse results to managers array
@@ -460,10 +463,10 @@ const updateEmployeeRole = async () => {
     // then ask which employee should be updated
     // and cross reference before inserting with employee id.
     const emps = await connection.query(
-      "SELECT DISTINCT "+
-      "CONCAT(e.last_name,', ',e.first_name) as name, "+
-      "e.id as id "+
-      "FROM employee e ",
+      "SELECT DISTINCT"+
+      " CONCAT(e.last_name,', ',e.first_name) as name,"+
+      " e.id as id"+
+      " FROM employee e",
       ""  // Dummy parameter to match prototype in wrapper object
     );
     // Parse results to roles array
@@ -490,12 +493,12 @@ const updateEmployeeRole = async () => {
     ** // then ask for manager to be added,
     ** // and cross reference before inserting with manager id.
     ** const mgrs = await connection.query(
-    **   "SELECT DISTINCT "+
-    **   "CONCAT(m.last_name,', ',m.first_name) as name, "+
-    **   "e.manager_id as id "+
-    **   "FROM employee e "+
-    **   "INNER JOIN employee m ON "+
-    **   "e.manager_id = m.id ",
+    **   "SELECT DISTINCT"+
+    **   " CONCAT(m.last_name,', ',m.first_name) as name,"+
+    **   " e.manager_id as id"+
+    **   " FROM employee e"+
+    **   " INNER JOIN employee m ON"+
+    **   " e.manager_id = m.id",
     **   ""  // Dummy parameter to match prototype in wrapper object
     ** );
     ** // Parse results to managers array
@@ -649,9 +652,9 @@ const main = (async () => {
   try {
     /* {{{ **
     ** const query = connection.query(
-    **   "SELECT * FROM employee " +
-    **   "INNER JOIN role ON " + 
-    **   "employee.role_id = role.id",
+    **   "SELECT * FROM employee" +
+    **   " INNER JOIN role ON" +
+    **   " employee.role_id = role.id",
     **   (err, res) => {
     **     if (err) throw err;
     **     console.table(res);
