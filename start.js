@@ -81,6 +81,7 @@ const viewAllDepartments = async () => {
   );
   console.clear()
   if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+    console.log('sql=\n"'+connection.sql+'"\n');
     console.log(res);
   } //DEBUG       }}} End debugging
   console.table(res);
@@ -96,6 +97,7 @@ const viewAllRoles = async () => {
     );
     console.clear()
     if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
       console.log(res);
     } //DEBUG       }}} End debugging
     console.table(res);
@@ -127,6 +129,7 @@ const viewAllEmployees = async () => {
     );
     console.clear()
     if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
       console.log(res);
     } //DEBUG       }}} End debugging
     console.table(res);
@@ -146,6 +149,7 @@ const viewAllEmployeesByDept = async () => {
     // Parse results to depts array
     const depts = dept.map(obj => obj.name);
     if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
       console.log('dept=\n"'+JSON.stringify(dept)+'"');
       console.log('depts=\n"'+JSON.stringify(depts)+'"');
     } //DEBUG       }}} End debugging
@@ -182,6 +186,7 @@ const viewAllEmployeesByDept = async () => {
     );
     console.clear()
     if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
       console.log(res);
     } //DEBUG       }}} End debugging
     console.table(res);
@@ -207,6 +212,7 @@ const viewAllEmployeesByMgr = async () => {
     // Parse results to managers array
     const managers = mgrs.map(obj => obj.name);
     if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
       console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
       console.log('managers=\n"'+JSON.stringify(managers)+'"');
     } //DEBUG       }}} End debugging
@@ -248,8 +254,11 @@ const viewAllEmployeesByMgr = async () => {
       [manager_id]
     );
     console.clear()
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-      console.log(res);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG       }}} End debugging
     } //DEBUG       }}} End debugging
     console.table(res);
   } catch (error) {
@@ -273,13 +282,18 @@ const addDepartment = async () => {
       "INSERT INTO department SET ?",
       args
     );
-    /* {{{ **
-    ** console.clear()
-    ** }}} */
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-      console.log(res);
-      console.table(res);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+        console.table(res);
+      } //DEBUG       }}} End debugging
     } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** else {
+    **   console.clear()
+    ** }
+    ** }}} */
     console.log(res.affectedRows + " row(s) inserted!\n");
   } catch (error) {
     console.log(error.message);
@@ -297,9 +311,12 @@ const addRole = async () => {
     );
     // Parse results to depts array
     const depts = dept.map(obj => obj.name);
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-      console.log('dept=\n"'+JSON.stringify(dept)+'"');
-      console.log('depts=\n"'+JSON.stringify(depts)+'"');
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('dept=\n"'+JSON.stringify(dept)+'"');
+        console.log('depts=\n"'+JSON.stringify(depts)+'"');
+      } //DEBUG       }}} End debugging
     } //DEBUG       }}} End debugging
     const questions = [ // {{{
       {
@@ -347,15 +364,18 @@ const addRole = async () => {
       "INSERT INTO role SET ?",
       args
     );
-    /* {{{ **
-    ** console.clear()
-    ** }}} */
     if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log(res);
       } //DEBUG       }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** else {
+    **   console.clear()
+    ** }
+    ** }}} */
     console.log(res.affectedRows + " row(s) inserted!\n");
   } catch (error) {
     console.log(error.message);
@@ -373,9 +393,12 @@ const addEmployee = async () => {
     );
     // Parse results to roles array
     const roles = role.map(obj => obj.title);
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-      console.log('role=\n"'+JSON.stringify(role)+'"');
-      console.log('roles=\n"'+JSON.stringify(roles)+'"');
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('role=\n"'+JSON.stringify(role)+'"');
+        console.log('roles=\n"'+JSON.stringify(roles)+'"');
+      } //DEBUG       }}} End debugging
     } //DEBUG       }}} End debugging
     // Query first to get list of managers with ids
     // then ask for manager to be added,
@@ -391,9 +414,12 @@ const addEmployee = async () => {
     );
     // Parse results to managers array
     const managers = mgrs.map(obj => obj.name);
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-      console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
-      console.log('managers=\n"'+JSON.stringify(managers)+'"');
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
+        console.log('managers=\n"'+JSON.stringify(managers)+'"');
+      } //DEBUG       }}} End debugging
     } //DEBUG       }}} End debugging
     const questions = [ // {{{
       {
@@ -415,7 +441,7 @@ const addEmployee = async () => {
       },
       {
         type: "list", name: "whichMgr",
-        message: "Which manager?",
+        message: "Assign which existing manager?",
         choices: managers,
         when: (answers) => (answers.pickMgr)
       }
@@ -449,15 +475,18 @@ const addEmployee = async () => {
       "INSERT INTO employee SET ?",
       args
     );
-    /* {{{ **
-    ** console.clear()
-    ** }}} */
     if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log(res);
       } //DEBUG       }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** else {
+    **   console.clear()
+    ** }
+    ** }}} */
     console.log(res.affectedRows + " row(s) inserted!\n");
   } catch (error) {
     console.log(error.message);
@@ -478,9 +507,12 @@ const updateEmployeeRole = async () => {
     );
     // Parse results to employees array
     const employees = emps.map(obj => obj.name);
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-      console.log('emps=\n"'+JSON.stringify(emps)+'"');
-      console.log('employees=\n"'+JSON.stringify(employees)+'"');
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('emps=\n"'+JSON.stringify(emps)+'"');
+        console.log('employees=\n"'+JSON.stringify(employees)+'"');
+      } //DEBUG       }}} End debugging
     } //DEBUG       }}} End debugging
     // Query first to get list of roles with ids
     // then ask for role to be added,
@@ -491,9 +523,12 @@ const updateEmployeeRole = async () => {
     );
     // Parse results to roles array
     const roles = role.map(obj => obj.title);
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-      console.log('role=\n"'+JSON.stringify(role)+'"');
-      console.log('roles=\n"'+JSON.stringify(roles)+'"');
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('role=\n"'+JSON.stringify(role)+'"');
+        console.log('roles=\n"'+JSON.stringify(roles)+'"');
+      } //DEBUG       }}} End debugging
     } //DEBUG       }}} End debugging
     const questions = [ // {{{
       {
@@ -542,16 +577,18 @@ const updateEmployeeRole = async () => {
       "UPDATE employee SET ? WHERE ?",
       args
     );
-    /* {{{ **
-    ** console.clear()
-    ** }}} */
     if (DEBUG) { // {{{ Debugging output
-      console.log('sql=\n"'+connection.sql+'"');
+      console.log('sql=\n"'+connection.sql+'"\n');
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log(res);
       } //DEBUG       }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** else {
+    **   console.clear()
+    ** }
+    ** }}} */
     console.log(res.affectedRows + " row(s) updated!\n");
   } catch (error) {
     console.log(error.message);
@@ -572,9 +609,12 @@ const updateEmployeeManager = async () => {
     );
     // Parse results to employees array
     const employees = emps.map(obj => obj.name);
-    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-      console.log('emps=\n"'+JSON.stringify(emps)+'"');
-      console.log('employees=\n"'+JSON.stringify(employees)+'"');
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"\n');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('emps=\n"'+JSON.stringify(emps)+'"');
+        console.log('employees=\n"'+JSON.stringify(employees)+'"');
+      } //DEBUG       }}} End debugging
     } //DEBUG       }}} End debugging
     // List of managers here can reuse full list of employees
     // then ask for manager to be added,
@@ -609,8 +649,9 @@ const updateEmployeeManager = async () => {
       },
       {
         type: "list", name: "whichMgr",
-        message: "Assign to which manager?",
-        choices: managers
+        message: "Assign whom as manager?",
+        choices: managers,
+        when: (answers) => (answers.pickMgr)
       }
     ];                  // }}}
     let inp = await inquirer.prompt(questions);
@@ -651,16 +692,18 @@ const updateEmployeeManager = async () => {
       "UPDATE employee SET ? WHERE ?",
       args
     );
-    /* {{{ **
-    ** console.clear()
-    ** }}} */
     if (DEBUG) { // {{{ Debugging output
-      console.log('sql=\n"'+connection.sql+'"');
+      console.log('sql=\n"'+connection.sql+'"\n');
       if (DEBUG >= 2) { // {{{ Debugging output
         console.log(res);
       } //DEBUG       }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** else {
+    **   console.clear()
+    ** }
+    ** }}} */
     console.log(res.affectedRows + " row(s) updated!\n");
   } catch (error) {
     console.log(error.message);
