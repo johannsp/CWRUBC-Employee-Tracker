@@ -19,11 +19,9 @@ const cTable = require("console.table");
 
 // Enable DEBUG to debug query output
 // set value to number above 1 for more debugging output
+const DEBUG = false;
 /* {{{ **
-** const DEBUG = false;
-** }}} */
-const DEBUG = true;
-/* {{{ **
+** const DEBUG = true;
 ** const DEBUG = 2;
 ** }}} */
 
@@ -1175,8 +1173,7 @@ const totalSalaryByDept = async () => {
       " employee.role_id = role.id"+
       " INNER JOIN department ON"+ 
       " role.department_id = department.id"+
-      " WHERE department.name = ?"+
-      " GROUP BY role.salary",
+      " WHERE department.name = ?",
       [inp.whichDept]
     );
     console.clear()
