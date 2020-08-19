@@ -446,6 +446,123 @@ const addEmployee = async () => {
   }
 }
 
+const updateEmployeeRole = async () => {
+  try {
+    // Query first to get list of employees with ids
+    // then ask which employee should be updated
+    // and cross reference before inserting with employee id.
+    const emps = await connection.query(
+      "SELECT DISTINCT "+
+      "CONCAT(e.last_name,', ',e.first_name) as name, "+
+      "e.id as id "+
+      "FROM employee e ",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to roles array
+    const employees = emps.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('emps=\n"'+JSON.stringify(emps)+'"');
+      console.log('employees=\n"'+JSON.stringify(employees)+'"');
+    } //DEBUG       }}} End debugging
+    // Query first to get list of roles with ids
+    // then ask for role to be added,
+    // and cross reference before inserting with role id.
+    const role = await connection.query(
+      "SELECT title, id FROM role",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to roles array
+    const roles = role.map(obj => obj.title);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('role=\n"'+JSON.stringify(role)+'"');
+      console.log('roles=\n"'+JSON.stringify(roles)+'"');
+    } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** // Query first to get list of managers with ids
+    ** // then ask for manager to be added,
+    ** // and cross reference before inserting with manager id.
+    ** const mgrs = await connection.query(
+    **   "SELECT DISTINCT "+
+    **   "CONCAT(m.last_name,', ',m.first_name) as name, "+
+    **   "e.manager_id as id "+
+    **   "FROM employee e "+
+    **   "INNER JOIN employee m ON "+
+    **   "e.manager_id = m.id ",
+    **   ""  // Dummy parameter to match prototype in wrapper object
+    ** );
+    ** // Parse results to managers array
+    ** const managers = mgrs.map(obj => obj.name);
+    ** if (DEBUG) { // {{{ Debugging output
+    **   console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
+    **   console.log('managers=\n"'+JSON.stringify(managers)+'"');
+    ** } //DEBUG       }}} End debugging
+    ** }}} */
+    const questions = [ // {{{
+      {
+        type: "list", name: "whichEmp",
+        message: "Update which employee?",
+        choices: employees
+      },
+      {
+        type: "list", name: "whichRole",
+        message: "Set to which role?",
+        choices: roles
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    // Lookup up id(s) by value for use in query
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichEmp=\n"'+inp.whichEmp+'"');
+    } //DEBUG       }}} End debugging
+    const findEmp = (slot) => slot.name == inp.whichEmp;
+    emp_id = emps[emps.findIndex(findEmp)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichEmp=\n"'+inp.whichEmp+'"');
+      console.log('emp_id=\n"'+emp_id+'"');
+    } //DEBUG       }}} End debugging
+    const findRole = (slot) => slot.title == inp.whichRole;
+    role_id = role[role.findIndex(findRole)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichRole=\n"'+inp.whichRole+'"');
+      console.log('role_id=\n"'+role_id+'"');
+    } //DEBUG       }}} End debugging
+    /* {{{ **
+    ** let manager_id = null; // By design manager_id defaults to null
+    ** if (inp.pickMgr) {
+    **   const findMgr = (slot) => slot.name == inp.whichMgr;
+    **   manager_id = mgrs[mgrs.findIndex(findMgr)].id
+    ** }
+    ** }}} */
+    const args = [
+      {
+        role_id: role_id
+      },
+      {
+        id: emp_id
+      }
+    ];
+    if (DEBUG) { // {{{ Debugging output
+      console.log('args=\n"'+args+'"');
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "UPDATE employee SET ? WHERE ?",
+      args
+    );
+    /* {{{ **
+    ** console.clear()
+    ** }}} */
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"');
+      console.log(res);
+      console.table(res);
+    } //DEBUG       }}} End debugging
+    console.log(res.affectedRows + " row(s) updated!\n");
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
 const mainMenu = async () => {
   try {
     return new Promise(async (resolve, reject) => {
@@ -499,6 +616,7 @@ const mainMenu = async () => {
           await addEmployee();
           break;
         case "Update Employee Role":
+          await updateEmployeeRole();
           break;
         case "Update Employee Manager":
           break;
