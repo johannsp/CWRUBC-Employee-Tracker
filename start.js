@@ -18,7 +18,14 @@ const cTable = require("console.table");
 ** }}} */
 
 // Enable DEBUG to debug query output
+// set value to number above 1 for more debugging output
+/* {{{ **
+** const DEBUG = false;
+** }}} */
 const DEBUG = true;
+/* {{{ **
+** const DEBUG = 2;
+** }}} */
 
 // Follow example code to create a custom class providing a Promise object
 // wrapper object around the core mysql methods.
@@ -469,7 +476,7 @@ const updateEmployeeRole = async () => {
       " FROM employee e",
       ""  // Dummy parameter to match prototype in wrapper object
     );
-    // Parse results to roles array
+    // Parse results to employees array
     const employees = emps.map(obj => obj.name);
     if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log('emps=\n"'+JSON.stringify(emps)+'"');
@@ -488,26 +495,6 @@ const updateEmployeeRole = async () => {
       console.log('role=\n"'+JSON.stringify(role)+'"');
       console.log('roles=\n"'+JSON.stringify(roles)+'"');
     } //DEBUG       }}} End debugging
-    /* {{{ **
-    ** // Query first to get list of managers with ids
-    ** // then ask for manager to be added,
-    ** // and cross reference before inserting with manager id.
-    ** const mgrs = await connection.query(
-    **   "SELECT DISTINCT"+
-    **   " CONCAT(m.last_name,', ',m.first_name) as name,"+
-    **   " e.manager_id as id"+
-    **   " FROM employee e"+
-    **   " INNER JOIN employee m ON"+
-    **   " e.manager_id = m.id",
-    **   ""  // Dummy parameter to match prototype in wrapper object
-    ** );
-    ** // Parse results to managers array
-    ** const managers = mgrs.map(obj => obj.name);
-    ** if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
-    **   console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
-    **   console.log('managers=\n"'+JSON.stringify(managers)+'"');
-    ** } //DEBUG       }}} End debugging
-    ** }}} */
     const questions = [ // {{{
       {
         type: "list", name: "whichEmp",
@@ -537,13 +524,6 @@ const updateEmployeeRole = async () => {
       console.log('inp.whichRole=\n"'+inp.whichRole+'"');
       console.log('role_id=\n"'+role_id+'"');
     } //DEBUG       }}} End debugging
-    /* {{{ **
-    ** let manager_id = null; // By design manager_id defaults to null
-    ** if (inp.pickMgr) {
-    **   const findMgr = (slot) => slot.name == inp.whichMgr;
-    **   manager_id = mgrs[mgrs.findIndex(findMgr)].id
-    ** }
-    ** }}} */
     const args = [
       {
         role_id: role_id
@@ -567,7 +547,118 @@ const updateEmployeeRole = async () => {
     ** }}} */
     if (DEBUG) { // {{{ Debugging output
       console.log('sql=\n"'+connection.sql+'"');
-      console.log(res);
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG       }}} End debugging
+      console.table(res);
+    } //DEBUG       }}} End debugging
+    console.log(res.affectedRows + " row(s) updated!\n");
+  } catch (error) {
+    console.log(error.message);
+  }
+}
+
+const updateEmployeeManager = async () => {
+  try {
+    // Query first to get list of employees with ids
+    // then ask which employee should be updated
+    // and cross reference before inserting with employee id.
+    const emps = await connection.query(
+      "SELECT DISTINCT"+
+      " CONCAT(e.last_name,', ',e.first_name) as name,"+
+      " e.id as id"+
+      " FROM employee e",
+      ""  // Dummy parameter to match prototype in wrapper object
+    );
+    // Parse results to employees array
+    const employees = emps.map(obj => obj.name);
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
+      console.log('emps=\n"'+JSON.stringify(emps)+'"');
+      console.log('employees=\n"'+JSON.stringify(employees)+'"');
+    } //DEBUG       }}} End debugging
+    // List of managers here can reuse full list of employees
+    // then ask for manager to be added,
+    // and cross reference before inserting with manager id.
+    /* {{{ **
+    ** const mgrs = await connection.query(
+    **   "SELECT DISTINCT"+
+    **   " CONCAT(m.last_name,', ',m.first_name) as name,"+
+    **   " e.manager_id as id"+
+    **   " FROM employee e"+
+    **   " INNER JOIN employee m ON"+
+    **   " e.manager_id = m.id",
+    **   ""  // Dummy parameter to match prototype in wrapper object
+    ** );
+    ** }}} */
+    const mgrs = emps;
+    // Parse results to managers array
+    const managers = mgrs.map(obj => obj.name);
+    if (DEBUG) { // {{{ Debugging output
+      console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
+      console.log('managers=\n"'+JSON.stringify(managers)+'"');
+    } //DEBUG       }}} End debugging
+    const questions = [ // {{{
+      {
+        type: "list", name: "whichEmp",
+        message: "Update which employee?",
+        choices: employees
+      },
+      {
+        type: "confirm", name: "pickMgr",
+        message: "Should there be a manager be assigned?",
+      },
+      {
+        type: "list", name: "whichMgr",
+        message: "Assign to which manager?",
+        choices: managers
+      }
+    ];                  // }}}
+    let inp = await inquirer.prompt(questions);
+    // Lookup up id(s) by value for use in query
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichEmp=\n"'+inp.whichEmp+'"');
+    } //DEBUG       }}} End debugging
+    const findEmp = (slot) => slot.name == inp.whichEmp;
+    emp_id = emps[emps.findIndex(findEmp)].id
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichEmp=\n"'+inp.whichEmp+'"');
+      console.log('emp_id=\n"'+emp_id+'"');
+    } //DEBUG       }}} End debugging
+    let manager_id = null; // By design manager_id defaults to null
+    if (inp.pickMgr) {
+      const findMgr = (slot) => slot.name == inp.whichMgr;
+      manager_id = mgrs[mgrs.findIndex(findMgr)].id
+    }
+    if (DEBUG) { // {{{ Debugging output
+      console.log('inp.whichMgr=\n"'+inp.whichMgr+'"');
+      console.log('manager_id=\n"'+manager_id+'"');
+    } //DEBUG       }}} End debugging
+    const args = [
+      {
+        manager_id: manager_id
+      },
+      {
+        id: emp_id
+      }
+    ];
+    if (DEBUG) { // {{{ Debugging output
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG       }}} End debugging
+      console.log('args=\n"'+JSON.stringify(args)+'"');
+    } //DEBUG       }}} End debugging
+    const res = await connection.query(
+      "UPDATE employee SET ? WHERE ?",
+      args
+    );
+    /* {{{ **
+    ** console.clear()
+    ** }}} */
+    if (DEBUG) { // {{{ Debugging output
+      console.log('sql=\n"'+connection.sql+'"');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG       }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
     console.log(res.affectedRows + " row(s) updated!\n");
@@ -632,6 +723,7 @@ const mainMenu = async () => {
           await updateEmployeeRole();
           break;
         case "Update Employee Manager":
+          await updateEmployeeManager();
           break;
         case "Exit":
           continuing = false;
