@@ -73,7 +73,7 @@ const viewAllDepartments = async () => {
     ""  // Dummy parameter to match prototype in wrapper object
   );
   console.clear()
-  if (DEBUG) { // {{{ Debugging output
+  if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
     console.log(res);
   } //DEBUG       }}} End debugging
   console.table(res);
@@ -88,7 +88,7 @@ const viewAllRoles = async () => {
       ""  // Dummy parameter to match prototype in wrapper object
     );
     console.clear()
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log(res);
     } //DEBUG       }}} End debugging
     console.table(res);
@@ -118,7 +118,7 @@ const viewAllEmployees = async () => {
       ""  // Dummy parameter to match prototype in wrapper object
     );
     console.clear()
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log(res);
     } //DEBUG       }}} End debugging
     console.table(res);
@@ -137,7 +137,7 @@ const viewAllEmployeesByDept = async () => {
     );
     // Parse results to depts array
     const depts = dept.map(obj => obj.name);
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log('dept=\n"'+JSON.stringify(dept)+'"');
       console.log('depts=\n"'+JSON.stringify(depts)+'"');
     } //DEBUG       }}} End debugging
@@ -172,7 +172,7 @@ const viewAllEmployeesByDept = async () => {
       [inp.whichDept]
     );
     console.clear()
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log(res);
     } //DEBUG       }}} End debugging
     console.table(res);
@@ -197,7 +197,7 @@ const viewAllEmployeesByMgr = async () => {
     );
     // Parse results to managers array
     const managers = mgrs.map(obj => obj.name);
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
       console.log('managers=\n"'+JSON.stringify(managers)+'"');
     } //DEBUG       }}} End debugging
@@ -238,7 +238,7 @@ const viewAllEmployeesByMgr = async () => {
       [manager_id]
     );
     console.clear()
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log(res);
     } //DEBUG       }}} End debugging
     console.table(res);
@@ -266,7 +266,7 @@ const addDepartment = async () => {
     /* {{{ **
     ** console.clear()
     ** }}} */
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log(res);
       console.table(res);
     } //DEBUG       }}} End debugging
@@ -287,7 +287,7 @@ const addRole = async () => {
     );
     // Parse results to depts array
     const depts = dept.map(obj => obj.name);
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log('dept=\n"'+JSON.stringify(dept)+'"');
       console.log('depts=\n"'+JSON.stringify(depts)+'"');
     } //DEBUG       }}} End debugging
@@ -328,7 +328,9 @@ const addRole = async () => {
       department_id: dept_id
     }
     if (DEBUG) { // {{{ Debugging output
-      console.log('args=\n"'+args+'"');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG       }}} End debugging
       console.log('args=\n"'+JSON.stringify(args)+'"');
     } //DEBUG       }}} End debugging
     const res = await connection.query(
@@ -339,7 +341,9 @@ const addRole = async () => {
     ** console.clear()
     ** }}} */
     if (DEBUG) { // {{{ Debugging output
-      console.log(res);
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG       }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
     console.log(res.affectedRows + " row(s) inserted!\n");
@@ -359,7 +363,7 @@ const addEmployee = async () => {
     );
     // Parse results to roles array
     const roles = role.map(obj => obj.title);
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log('role=\n"'+JSON.stringify(role)+'"');
       console.log('roles=\n"'+JSON.stringify(roles)+'"');
     } //DEBUG       }}} End debugging
@@ -377,7 +381,7 @@ const addEmployee = async () => {
     );
     // Parse results to managers array
     const managers = mgrs.map(obj => obj.name);
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
       console.log('managers=\n"'+JSON.stringify(managers)+'"');
     } //DEBUG       }}} End debugging
@@ -426,7 +430,9 @@ const addEmployee = async () => {
       manager_id: manager_id
     }
     if (DEBUG) { // {{{ Debugging output
-      console.log('args=\n"'+args+'"');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG       }}} End debugging
       console.log('args=\n"'+JSON.stringify(args)+'"');
     } //DEBUG       }}} End debugging
     const res = await connection.query(
@@ -437,7 +443,9 @@ const addEmployee = async () => {
     ** console.clear()
     ** }}} */
     if (DEBUG) { // {{{ Debugging output
-      console.log(res);
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log(res);
+      } //DEBUG       }}} End debugging
       console.table(res);
     } //DEBUG       }}} End debugging
     console.log(res.affectedRows + " row(s) inserted!\n");
@@ -460,7 +468,7 @@ const updateEmployeeRole = async () => {
     );
     // Parse results to roles array
     const employees = emps.map(obj => obj.name);
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log('emps=\n"'+JSON.stringify(emps)+'"');
       console.log('employees=\n"'+JSON.stringify(employees)+'"');
     } //DEBUG       }}} End debugging
@@ -473,7 +481,7 @@ const updateEmployeeRole = async () => {
     );
     // Parse results to roles array
     const roles = role.map(obj => obj.title);
-    if (DEBUG) { // {{{ Debugging output
+    if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
       console.log('role=\n"'+JSON.stringify(role)+'"');
       console.log('roles=\n"'+JSON.stringify(roles)+'"');
     } //DEBUG       }}} End debugging
@@ -492,7 +500,7 @@ const updateEmployeeRole = async () => {
     ** );
     ** // Parse results to managers array
     ** const managers = mgrs.map(obj => obj.name);
-    ** if (DEBUG) { // {{{ Debugging output
+    ** if (DEBUG && DEBUG >= 2) { // {{{ Debugging output
     **   console.log('mgrs=\n"'+JSON.stringify(mgrs)+'"');
     **   console.log('managers=\n"'+JSON.stringify(managers)+'"');
     ** } //DEBUG       }}} End debugging
@@ -542,7 +550,9 @@ const updateEmployeeRole = async () => {
       }
     ];
     if (DEBUG) { // {{{ Debugging output
-      console.log('args=\n"'+args+'"');
+      if (DEBUG >= 2) { // {{{ Debugging output
+        console.log('args=\n"'+args+'"');
+      } //DEBUG       }}} End debugging
       console.log('args=\n"'+JSON.stringify(args)+'"');
     } //DEBUG       }}} End debugging
     const res = await connection.query(
