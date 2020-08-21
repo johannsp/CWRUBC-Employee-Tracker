@@ -1,5 +1,6 @@
 .vimrc
 .mysql
 node_modules/**
-reference/**
 package-lock.json
+reference/**
+ExampleProto/**
